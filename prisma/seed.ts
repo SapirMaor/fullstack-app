@@ -1,52 +1,58 @@
 import { PrismaClient, Prisma } from '@prisma/client'
-
 const prisma = new PrismaClient()
 
-const userData: Prisma.UserCreateInput[] = [
-  {
-    name: 'Alice',
-    email: 'alice@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Join the Prisma Slack',
-          content: 'https://slack.prisma.io',
-          published: true,
-        },
-      ],
-    },
-  },
-  {
-    name: 'Nilu',
-    email: 'nilu@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Follow Prisma on Twitter',
-          content: 'https://www.twitter.com/prisma',
-          published: true,
-        },
-      ],
-    },
-  },
-  {
-    name: 'Mahmoud',
-    email: 'mahmoud@prisma.io',
-    posts: {
-      create: [
-        {
-          title: 'Ask a question about Prisma on GitHub',
-          content: 'https://www.github.com/prisma/prisma/discussions',
-          published: true,
-        },
-        {
-          title: 'Prisma on YouTube',
-          content: 'https://pris.ly/youtube',
-        },
-      ],
-    },
-  },
-]
+function getRandomLetters(len : number) {
+  let str = '';
+  const collection = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+  for (let i = 0; i < len; i++) {
+    let index = Math.floor(Math.random() * collection.length)
+    str = str + collection.charAt(index)
+  }
+  return str;
+}
+
+function getRandomNumbers(len : number) {
+  let str = '';
+  const collection = '0123456789';
+  for (let i = 0; i < len; i++) {
+    let index = Math.floor(Math.random() * collection.length)
+    str = str + collection.charAt(index)
+  }
+  return str;
+}
+
+function makePost() {
+  const title = getRandomLetters(10);
+  const content = getRandomLetters(15) + getRandomNumbers(10);
+  const published = true;
+  return {"title": title, "content": content, "published": published };
+}
+
+function getPosts(numPosts : number) {
+  let postArray = [];
+  for(let i=0; i<numPosts; i++){
+    postArray.push(makePost())
+  }
+  return{ "create": postArray };
+}
+
+function makeUser() {
+  const name = getRandomLetters(5);
+  const email = `${name}@prisma.io`;
+  const numPosts = 2;
+  const posts = getPosts(numPosts); 
+  return { "name": name, "email": email, "posts": posts };
+}
+
+function makeData(){
+  let data = [];
+  for(let i=0; i<20; i++){
+    data.push(makeUser());
+  }
+  return data;
+}
+
+const userData: Prisma.UserCreateInput[] = makeData();
 
 async function main() {
   console.log(`Start seeding ...`)

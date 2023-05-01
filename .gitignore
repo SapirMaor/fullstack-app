@@ -1,0 +1,10 @@
+node_modules
+.next
+prisma/dev.db
+.idea
+dist
+coverage
+tmp
+.vscode
+.DS_STORE
+.awcache
