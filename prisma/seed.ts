@@ -36,18 +36,18 @@ function getPosts(numPosts : number) {
   return{ "create": postArray };
 }
 
-function makeUser() {
+function makeUser(id : number) {
   const name = getRandomLetters(5);
-  const email = `${name}@prisma.io`;
-  const numPosts = 2;
+  const email = `${name + id}@prisma.io`;
+  const numPosts = 80;
   const posts = getPosts(numPosts); 
   return { "name": name, "email": email, "posts": posts };
 }
 
 function makeData(){
   let data = [];
-  for(let i=0; i<20; i++){
-    data.push(makeUser());
+  for(let i=0; i<12500; i++){
+    data.push(makeUser(i+1));
   }
   return data;
 }
