@@ -39,14 +39,14 @@ function getPosts(numPosts : number) {
 function makeUser(id : number) {
   const name = getRandomLetters(5);
   const email = `${name + id}@prisma.io`;
-  const numPosts = 80;
+  const numPosts = 4;
   const posts = getPosts(numPosts); 
   return { "name": name, "email": email, "posts": posts };
 }
 
 function makeData(){
   let data = [];
-  for(let i=0; i<12500; i++){
+  for(let i=0; i<10; i++){
     data.push(makeUser(i+1));
   }
   return data;

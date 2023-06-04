@@ -2,6 +2,10 @@ import React from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import { signOut, useSession } from "next-auth/react";
+import handle from "../pages/api/post";
+import { useState, useContext , useEffect } from "react";
+import { FiSun, FiMoon } from 'react-icons/fi';
+import { lightContext } from "../pages/lightContext";
 
 const Header: React.FC = () => {
   const router = useRouter();
@@ -10,8 +14,15 @@ const Header: React.FC = () => {
 
   const {data: session, status} = useSession();
 
+  const isDarkMode = useContext(lightContext);
+  const [isHeaderDarkMode, setisHeaderDarkMode] = useState(isDarkMode);
+  useEffect(() => {
+    setisHeaderDarkMode(isDarkMode);
+  });
+
+  
   let left = (
-    <div className="left">
+    <div className={`left header ${isHeaderDarkMode ? "dark" : "light"}`}>
       <Link href="/" legacyBehavior>
         <a className="bold" data-active={isActive("/")}>
           Feed
@@ -29,11 +40,23 @@ const Header: React.FC = () => {
         }
 
         .left a[data-active="true"] {
-          color: gray;
+          color: ${isDarkMode ? "#FFFFFF" : "gray"};
         }
 
         a + a {
           margin-left: 1rem;
+        }
+        .header {
+          color: inherit;
+          padding: 2rem;
+        }
+        .header.dark {
+          background-color: black;
+          color: white;
+        }
+        .header.light {
+          background-color: white;
+          color: black;
         }
       `}</style>
     </div>
@@ -43,7 +66,7 @@ const Header: React.FC = () => {
 
   if (status === 'loading') {
     left = (
-      <div className="left">
+      <div className={`left header ${isHeaderDarkMode ? "dark" : "light"}`}>
         <Link href="/" legacyBehavior>
           <a className="bold" data-active={isActive("/")}>
             Feed
@@ -61,21 +84,45 @@ const Header: React.FC = () => {
           }
 
           .left a[data-active="true"] {
-            color: gray;
+            color: ${isDarkMode ? "#FFFFFF" : "gray"};
           }
 
           a + a {
             margin-left: 1rem;
           }
+          .header {
+            color: inherit;
+            padding: 2rem;
+          }
+          .header.dark {
+            background-color: black;
+            color: white;
+          }
+          .header.light {
+            background-color: white;
+            color: black;
+          }
         `}</style>
       </div>
     );
     right = (
-      <div className="right">
+      <div className={`right header ${isHeaderDarkMode ? "dark" : "light"}`}>
         <p>Validating session ...</p>
         <style jsx>{`
           .right {
             margin-left: auto;
+          }
+          .header {
+            color: inherit;
+            padding: 2rem;
+          }
+          .header.dark {
+            background-color: black;
+            color: white;
+          }
+          .header.light {
+            background-color: white;
+            color: black;
           }
         `}</style>
       </div>
@@ -84,14 +131,14 @@ const Header: React.FC = () => {
 
   if (!session) {
     right = (
-      <div className="right">
+      <div className={`right header ${isHeaderDarkMode ? "dark" : "light"}`}>
         <Link href="/api/auth/signin" legacyBehavior>
           <a data-active={isActive("/signup")}>Log in</a>
         </Link>
         <style jsx>{`
           a {
             text-decoration: none;
-            color: #000;
+            color: ${isDarkMode ? "#FFFFFF" : "#000"};
             display: inline-block;
           }
 
@@ -104,9 +151,22 @@ const Header: React.FC = () => {
           }
 
           .right a {
-            border: 1px solid black;
+            border: 1px solid ${isDarkMode ? "white" : "black"};
             padding: 0.5rem 1rem;
             border-radius: 3px;
+            margin-right: 1rem;
+          }
+          .header {
+            color: inherit;
+            padding: 2rem;
+          }
+          .header.dark {
+            background-color: black;
+            color: white;
+          }
+          .header.light {
+            background-color: white;
+            color: black;
           }
         `}</style>
       </div>
@@ -115,7 +175,7 @@ const Header: React.FC = () => {
 
   if (session) {
     left = (
-      <div className="left">
+      <div className={`left header ${isHeaderDarkMode ? "dark" : "light"}`}>
         <Link href="/" legacyBehavior>
           <a className="bold" data-active={isActive("/")}>
             Feed
@@ -131,22 +191,34 @@ const Header: React.FC = () => {
 
           a {
             text-decoration: none;
-            color: #000;
+            color: ${isDarkMode ? "#FFFFFF" : "#000"};
             display: inline-block;
           }
 
           .left a[data-active="true"] {
-            color: gray;
+            color: ${isDarkMode ? "#FFFFFF" : "gray"};
           }
 
           a + a {
             margin-left: 1rem;
           }
+          .header {
+            color: inherit;
+            padding: 2rem;
+          }
+          .header.dark {
+            background-color: black;
+            color: white;
+          }
+          .header.light {
+            background-color: white;
+            color: black;
+          }
         `}</style>
       </div>
     );
     right = (
-      <div className="right">
+      <div className={`right header ${isHeaderDarkMode ? "dark" : "light"}`}>
         <p>
           {session.user?.name} ({session.user?.email})
         </p>
@@ -161,7 +233,8 @@ const Header: React.FC = () => {
         <style jsx>{`
           a {
             text-decoration: none;
-            color: #000;
+            color: ${isDarkMode ? "#FFFFFF" : "#000"};
+            background-color: ${isDarkMode ? "black" : "white"};
             display: inline-block;
           }
 
@@ -177,16 +250,27 @@ const Header: React.FC = () => {
 
           .right {
             margin-left: auto;
+            background-color: ${isDarkMode ? "black" : "white"};
+            margin-right: 1rem;
           }
 
           .right a {
             border: 1px solid black;
             padding: 0.5rem 1rem;
             border-radius: 3px;
+            background-color: ${isDarkMode ? "black" : "white"};
           }
-
-          button {
-            border: none;
+          .header {
+            color: inherit;
+            padding: 2rem;
+          }
+          .header.dark {
+            background-color: black;
+            color: white;
+          }
+          .header.light {
+            background-color: white;
+            color: black;
           }
         `}</style>
       </div>
@@ -202,6 +286,8 @@ const Header: React.FC = () => {
           display: flex;
           padding: 2rem;
           align-items: center;
+          background-color: ${isHeaderDarkMode ? "black" : "white"};
+          color: ${isHeaderDarkMode ? "#FFFFFF" : "#000"};
         }
       `}</style>
     </nav>
