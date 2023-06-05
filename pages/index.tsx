@@ -4,7 +4,6 @@ import Layout from "../components/Layout";
 import Post, { PostProps } from "../components/Post";
 import prisma from '../lib/prisma';
 import { useRouter } from 'next/router';
-import { FiSun, FiMoon } from "react-icons/fi";
 import { useContext, useState, useEffect } from "react";
 import { lightContext } from "./lightContext";
 
@@ -45,11 +44,12 @@ type Props = {
 
 const Blog = ({ feed, page, numOfPages }: Props) => {
   const router = useRouter();
-  const [isDarkMode, setIsDarkMode] = useState(false);
-  
-  const handleLightClick = () => {
-    setIsDarkMode((prevMode) => !prevMode);
-  };
+  const isDarkMode = useContext(lightContext);
+  const [isHeaderDarkMode, setisHeaderDarkMode] = useState(isDarkMode);
+
+  useEffect(() => {
+    setisHeaderDarkMode(isDarkMode);
+  });
 
   const handlePageClick = (currPage: number) => {
     router.push(`/?page=${currPage}`);
@@ -59,12 +59,7 @@ const Blog = ({ feed, page, numOfPages }: Props) => {
     <lightContext.Provider value={isDarkMode}> 
       <div>
         <Layout>
-          <div className={`layout toggle-button ${isDarkMode ? "dark" : "light"}`}  onClick={handleLightClick}> 
-            <div className={`icon-container ${isDarkMode ? "dark" : ""}`}>  
-                {isDarkMode ? <FiSun /> : <FiMoon />} 
-            </div>
-          </div>
-
+          <div className={`layout ${isHeaderDarkMode ? "dark" : "light"}`} /> 
           <div className="page">
             <h1>Public Feed</h1>
             <main>
@@ -128,32 +123,13 @@ const Blog = ({ feed, page, numOfPages }: Props) => {
               color: #fff;
               font-weight: bold;
             }
-            .toggle-button {
-              background-color: white;
-              color: black;
-              padding: 0.5rem 1rem;
-              cursor: pointer;
-            } 
-            .toggle-button.dark {
+            .layout.dark {
               background-color: black;
               color: white;
             }
-            .real-toggle-button {
-              display: inline-block;
-              border: 1px solid ${isDarkMode ? "white" : "black"};
-            }
-            .icon-container {
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              width: 24px;
-              height: 24px;
-              border: 1px solid black;
-              border-radius: 3px;
-            }
-          
-            .icon-container.dark {
-              border-color: white;
+            .layout.light {
+              background-color: white;
+              color: black;
             }            
           `}</style>
         </Layout>
