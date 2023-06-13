@@ -26,7 +26,7 @@
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx"
-, "lib/mongodb.js"  ],
+, "lib/mongodb.js", "model/user.js"  ],
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"
