@@ -132,11 +132,8 @@ const Header: React.FC = () => {
   if (!session) {
     right = (
       <div className={`right header ${isHeaderDarkMode ? "dark" : "light"}`}>
-        <Link href="/signInForm" legacyBehavior>
+        <Link href="/api/auth/signin" legacyBehavior>
           <a data-active={isActive("/signup")}>Log in</a>
-        </Link>
-        <Link href="/signUpForm" legacyBehavior>
-          <a data-active={isActive("/signup")}>Sign Up</a>
         </Link>
         <style jsx>{`
           a {
