@@ -1,14 +1,16 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GetServerSideProps } from "next";
 import ReactMarkdown from "react-markdown";
 import Layout from "../../components/Layout";
 import Router from "next/router";
 import { PostProps } from "../../components/Post";
 import prisma from '../../lib/prisma'
-import { useSession } from "next-auth/react";
+// import { useSession } from "next-auth/react";
+import cookie from 'js-cookie';
 import Video from "../../components/Video";
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  
   const post = await prisma.post.findUnique({
     where: {
       id: Number(params?.id) || -1,
@@ -25,26 +27,45 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
 };
 
 async function publishPost(id: number): Promise<void> {
-  await fetch(`/api/publish/${id}`, {
+  const res = await fetch(`/api/publish/${id}`, {
     method: "PUT",
   });
-  await Router.push("/")
+  if(res.status === 200){
+    await Router.push("/");
+  }
+  else{
+    await res.json().then(error => alert(error.error));
+    await Router.push("/");
+  }
 }
 
 async function deletePost(id: number): Promise<void> {
-  await fetch(`/api/post/${id}`, {
+  const res = await fetch(`/api/post/${id}`, {
     method: "DELETE",
   });
-  await Router.push("/")
+  if(res.status === 200){
+    await Router.push("/");
+  }
+  else{
+    await res.json().then(error => alert(error.error));
+    await Router.push("/");
+  }
 }
 
 const Post: React.FC<PostProps> = (props) => {
-  const { data: session, status } = useSession();
-  if (status === 'loading') {
-    return <div>Authenticating ...</div>;
-  }
-  const userHasValidSession = Boolean(session);
-  const postBelongsToUser = session?.user?.email === props.author?.email;
+  const [userHasValidSession, setUserHasValidSession] = useState(false);
+  const [postBelongsToUser, setPostBelongsToUser] = useState(false);
+
+  useEffect(() => {
+    const user_cookie = cookie.get('userCookie');
+    if (user_cookie) {
+      const parsedCookie = JSON.parse(user_cookie);
+      const { token, email } = parsedCookie;
+      setUserHasValidSession(Boolean(token));
+      setPostBelongsToUser(email === props.author?.email);
+    }
+  }, []);
+
   let title = props.title;
   if (!props.published) {
     title = `${title} (Draft)`;

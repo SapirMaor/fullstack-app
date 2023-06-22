@@ -1,23 +1,34 @@
 import React, { useState, useRef, useEffect } from "react";
 import Layout from "../components/Layout";
 import Router from "next/router";
-import { useSession } from "next-auth/react";
+import cookie from 'js-cookie';
+// import { useSession } from "next-auth/react";
 
 const Draft: React.FC = () => {
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const { data: session, status } = useSession();
+  const [loading, setLoading] = useState(false);
+  // const { data: session, status } = useSession();
+
+  let user_cookie: any = cookie.get('userCookie');
+  let token: any, email: any;
+  if(user_cookie){
+    user_cookie = JSON.parse(user_cookie);
+    token = user_cookie.token;
+    email = user_cookie.email;
+  }
+
   const videoRef = useRef<HTMLInputElement|null>(null)
   const titleRef = useRef<HTMLInputElement|null>(null)
   let videoId = "";
   let formData = new FormData();
-  let email = session?.user?.email;
   const [pressed, setPressed] = useState(false);
 
   const submitData = async (e: React.SyntheticEvent) => {
     setPressed(true);
     e.preventDefault();
     if(!formData.keys().next().done){
+      setLoading(true);
       try {
         const response = await fetch("/api/upload", {
           method: "POST",
@@ -27,27 +38,31 @@ const Draft: React.FC = () => {
         videoId = data.public_id;
       } catch (error) {
         console.error(error);
-      //   setShowSpinner(false);
-      // } finally {
-      //   setShowSpinner(false);
-      //   setShowVideo(true);
+      }
+      finally{
+        setLoading(false);
       }
     }
     try {
-      const body = { title, content, videoId, session, email };
-      await fetch(`/api/post`, {
+      const body = { title, content, videoId, token, email };
+      const res = await fetch(`/api/post`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(body),
       });
-      await Router.push("/drafts");
+      if(res.status === 200){
+        await Router.push("/drafts");
+      }
+      else{
+        await res.json().then(error => alert(error.error));
+        await Router.push("/");
+      }
     } catch (error) {
-      console.error(error);
+      console.error("error");
     }
   };
   
   const handleVideoUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
-    // setShowSpinner(true);
     event.preventDefault();
     const file = event.target.files && event.target.files[0];
     if (file){
@@ -84,13 +99,11 @@ const Draft: React.FC = () => {
             rows={8}
             value={content}
           />
-          <div>
-            {/* <Spinner displayed={showSpinner} /> */}        
-          </div>
-          <input disabled={!content || !title ||pressed} type="submit" value="Create" className="create-button" />
+          <input disabled={!content || !title || pressed || loading } type="submit" value="Create" className="create-button" />
           <a className="back" href="#" onClick={() => Router.push("/")}>
             or Cancel
           </a>
+          {loading && <a>Loading...</a>}
         </form>
         <span className="mt-2 text-base text-black leading-normal">
           Select a video: 

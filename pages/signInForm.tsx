@@ -2,23 +2,29 @@ import React, {useState, useRef, useEffect} from "react";
 import Layout from "../components/Layout";
 import Router from "next/router";
 import { error } from "console";
+import cookie from 'js-cookie';
 
 const userSignInForm: React.FC = () => {
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
     const [pressed, setPressed] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const submitData = async (e: React.SyntheticEvent) => {
         setPressed(true);
         e.preventDefault();
+        setLoading(true);
         try {
-          const body = { username, password }; // TODO: add a session
+          const body = { username, password };
           const res = await fetch(`/api/signin`, { 
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
           });
           if(res.status === 200){
+            const {token, username, email, name} = await res.json();
+            const user_c = {token: token, username: username, email: email, name: name}
+            cookie.set('userCookie', JSON.stringify(user_c))
             await Router.push("/");
           }
           else{
@@ -30,6 +36,8 @@ const userSignInForm: React.FC = () => {
           }
         } catch (error) {
           console.error(error);
+        } finally{
+          setLoading(false);
         }
       };
 
@@ -50,10 +58,11 @@ const userSignInForm: React.FC = () => {
                 type="text"
                 value={password}
               />              
-              <input disabled={!username || !password || pressed} type="submit" value="Login" className="create-button" />
+              <input disabled={!username || !password || pressed || loading } type="submit" value="Login" className="create-button" />
               <a className="back" href="#" onClick={() => Router.push("/")}>
                 or Cancel
               </a>
+              {loading && <a>loading...</a>}
             </form>
           </div>
           <style jsx>{`

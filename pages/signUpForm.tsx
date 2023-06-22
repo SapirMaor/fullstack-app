@@ -9,20 +9,32 @@ const userSignUpForm: React.FC = () => {
     const [name, setName] = useState("");
     const usernameRef = useRef<HTMLInputElement|null>(null)
     const [pressed, setPressed] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     const submitData = async (e: React.SyntheticEvent) => {
         setPressed(true);
         e.preventDefault();
+        setLoading(true);
         try {
-          const body = { username, password, email, name }; // TODO: add a session
-          await fetch(`/api/signup`, { 
+          const body = { username, password, email, name };
+          const res = await fetch(`/api/signup`, { 
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
           });
-          await Router.push("/");
+          if(res.status === 201){
+            await Router.push("/");
+          }
+          else{
+            await res.json().then(error => alert(error.error));
+            await Router.push("/signUpForm");
+            setEmail("");
+            setPressed(false);
+          }
         } catch (error) {
           console.error(error);
+        } finally{
+          setLoading(false);
         }
       };
 
@@ -62,10 +74,11 @@ const userSignUpForm: React.FC = () => {
                 value={name}
               />
 
-              <input disabled={!username || !password || !email || !name || pressed} type="submit" value="Create User" className="create-button" />
+              <input disabled={!username || !password || !email || !name || pressed || loading } type="submit" value="Create User" className="create-button" />
               <a className="back" href="#" onClick={() => Router.push("/")}>
                 or Cancel
               </a>
+              {loading && <a>loading...</a>}
             </form>
           </div>
           <style jsx>{`

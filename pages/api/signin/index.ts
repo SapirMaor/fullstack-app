@@ -14,13 +14,13 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     });
     const passwordMatch = user === null ? false : await bcrypt.compare(password, user.hashPassword);
     if(!(user && passwordMatch)){
-      return res.status(401).json({ error: 'Invalid username or password' })
+      return res.status(401).json({ error: 'Invalid username or password' }) // Unauthorized
     }
     const userForToken = {
       username: user.username,
       id: user.id
     }
     const token = jwt.sign(userForToken, process.env.SECRET);
-    res.status(200).send({token, username: user.username, name: user.name})
+    res.status(200).send({token: token, username: user.username, email: user.email, name: user.name}) // Okay
   }
   
