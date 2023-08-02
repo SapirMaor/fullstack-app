@@ -1,4 +1,4 @@
-import { SessionProvider } from "next-auth/react";
+// import { SessionProvider } from "next-auth/react";
 import { AppProps } from "next/app";
 import { FiSun, FiMoon } from "react-icons/fi";
 import { useState } from "react";
@@ -17,9 +17,9 @@ const App = ({ Component, pageProps }: AppProps) => {
             {isDarkMode ? <FiSun /> : <FiMoon />} 
           </div>
       </div>
-      <SessionProvider session={pageProps.session}>
+      {/* <SessionProvider session={pageProps.session}> */}
         <Component {...pageProps} />
-      </SessionProvider>
+      {/* </SessionProvider> */}
         <style jsx>{`
         .toggle-button {
           background-color: white;

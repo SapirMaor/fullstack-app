@@ -1,18 +1,16 @@
-import React from "react";
+import React, { useCallback } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { signOut, useSession } from "next-auth/react";
+// import { signOut, useSession } from "next-auth/react";
 import handle from "../pages/api/post";
 import { useState, useContext , useEffect } from "react";
-import { FiSun, FiMoon } from 'react-icons/fi';
 import { lightContext } from "../pages/lightContext";
+import cookie from 'js-cookie';
 
 const Header: React.FC = () => {
   const router = useRouter();
   const isActive: (pathname: string) => boolean = (pathname) =>
     router.pathname === pathname;
-
-  const {data: session, status} = useSession();
 
   const isDarkMode = useContext(lightContext);
   const [isHeaderDarkMode, setisHeaderDarkMode] = useState(isDarkMode);
@@ -20,7 +18,30 @@ const Header: React.FC = () => {
     setisHeaderDarkMode(isDarkMode);
   });
 
-  
+  const [user, setUser] = useState<{ token: any; username: any; email: any; } | null>(null); 
+
+  const getUserFromCookie = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      const userCookie = cookie.get('userCookie');
+      if (userCookie) {
+        const { token, username, email } = JSON.parse(userCookie);
+        return { token, username, email };
+      }
+    }
+    return null;
+  }, []);
+
+  useEffect(() => {
+    const user = getUserFromCookie();
+    setUser(user);
+  }, [getUserFromCookie]);
+
+  const handleLogout = () => {
+    cookie.remove('userCookie');
+    setUser(null);
+    router.push('/');
+  };
+
   let left = (
     <div className={`left header ${isHeaderDarkMode ? "dark" : "light"}`}>
       <Link href="/" legacyBehavior>
@@ -64,7 +85,7 @@ const Header: React.FC = () => {
 
   let right = null;
 
-  if (status === 'loading') {
+  // if (status === 'loading') {
     left = (
       <div className={`left header ${isHeaderDarkMode ? "dark" : "light"}`}>
         <Link href="/" legacyBehavior>
@@ -127,13 +148,16 @@ const Header: React.FC = () => {
         `}</style>
       </div>
     );
-  }
+  // }
 
-  if (!session) {
+  if (!user) {
     right = (
       <div className={`right header ${isHeaderDarkMode ? "dark" : "light"}`}>
-        <Link href="/api/auth/signin" legacyBehavior>
+        <Link href="/signInForm" legacyBehavior>
           <a data-active={isActive("/signup")}>Log in</a>
+        </Link>
+        <Link href="/signUpForm" legacyBehavior>
+          <a data-active={isActive("/signup")}>Sign Up</a>
         </Link>
         <style jsx>{`
           a {
@@ -173,7 +197,7 @@ const Header: React.FC = () => {
     );
   }
 
-  if (session) {
+  if (user) {
     left = (
       <div className={`left header ${isHeaderDarkMode ? "dark" : "light"}`}>
         <Link href="/" legacyBehavior>
@@ -183,6 +207,9 @@ const Header: React.FC = () => {
         </Link>
         <Link href="/drafts" legacyBehavior>
           <a data-active={isActive("/drafts")}>My drafts</a>
+        </Link>
+        <Link href="/profile" legacyBehavior>
+          <a data-active={isActive("/profile")}>My profile</a>
         </Link>
         <style jsx>{`
           .bold {
@@ -220,14 +247,14 @@ const Header: React.FC = () => {
     right = (
       <div className={`right header ${isHeaderDarkMode ? "dark" : "light"}`}>
         <p>
-          {session.user?.name} ({session.user?.email})
+        {user.username} ({user.email})
         </p>
         <Link href="/create" legacyBehavior>
           <button>
             <a>New post</a>
           </button>
         </Link>
-        <button onClick={() => signOut()}>
+        <button onClick={handleLogout}>
           <a>Log out</a>
         </button>
         <style jsx>{`
