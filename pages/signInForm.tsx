@@ -3,6 +3,7 @@ import Layout from "../components/Layout";
 import Router from "next/router";
 import { error } from "console";
 import cookie from 'js-cookie';
+import {setup} from "../lib/csrf"
 
 const userSignInForm: React.FC = () => {
     const [username, setUsername] = useState("");
@@ -102,5 +103,11 @@ const userSignInForm: React.FC = () => {
         </Layout>
       );
 };
+
+// export const getServerSideProps = setup(async () => {
+//   return {
+//     props: {},
+//   };
+//  });
 
 export default userSignInForm;

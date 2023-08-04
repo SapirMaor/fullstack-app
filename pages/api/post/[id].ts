@@ -3,9 +3,11 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import prisma from '../../../lib/prisma'
 import { parseCookies } from 'nookies';
 const jwt = require('jsonwebtoken');
+import {csrf} from "../../../lib/csrf"
 
 // DELETE /api/post/:id
-export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+  // async function handle(req: NextApiRequest, res: NextApiResponse) {
+  export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const postId = req.query.id;
 
   const cookies = parseCookies({req});
@@ -37,3 +39,5 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     );
   }
 }
+
+// export default csrf(handle);
