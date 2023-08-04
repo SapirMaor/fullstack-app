@@ -17,6 +17,12 @@ export default async function handle(req: NextApiRequest, res: NextApiResponse) 
     if(mail){
       return res.status(400).json({ error: 'Email already exists' }) // Bad request
     }
+    const emailPattern = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z.]+$/;
+    const isValidEmail = emailPattern.test(email);
+    if (!isValidEmail){
+      return res.status(400).json({ error: 'Email format is incorrect' }) // Bad request
+    }
+
 
     const result = await prisma.user.create({
         data: {
