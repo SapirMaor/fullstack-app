@@ -6,8 +6,8 @@ const jwt = require('jsonwebtoken');
 import {csrf} from "../../../lib/csrf"
 
 // DELETE /api/post/:id
-  // async function handle(req: NextApiRequest, res: NextApiResponse) {
-  export default async function handle(req: NextApiRequest, res: NextApiResponse) {
+  async function handle(req: NextApiRequest, res: NextApiResponse) {
+  // export default async function handle(req: NextApiRequest, res: NextApiResponse) {
   const postId = req.query.id;
 
   const cookies = parseCookies({req});
@@ -40,4 +40,4 @@ import {csrf} from "../../../lib/csrf"
   }
 }
 
-// export default csrf(handle);
+export default csrf(handle);

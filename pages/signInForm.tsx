@@ -104,10 +104,10 @@ const userSignInForm: React.FC = () => {
       );
 };
 
-// export const getServerSideProps = setup(async () => {
-//   return {
-//     props: {},
-//   };
-//  });
+export const getServerSideProps = setup(async () => {
+  return {
+    props: {},
+  };
+ });
 
 export default userSignInForm;
