@@ -49,12 +49,14 @@ const userSignInForm: React.FC = () => {
               <h1>Sign In</h1>
               <input
                 onChange={(e) => setUsername(e.target.value)}
+                name = "username"
                 placeholder="Username"
                 type="text"
                 value={username}
               />
               <input
                 onChange={(e) => setPassword(e.target.value)}
+                name = "password"
                 placeholder="Password"
                 type="text"
                 value={password}

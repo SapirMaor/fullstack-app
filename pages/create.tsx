@@ -87,6 +87,7 @@ const Draft: React.FC = () => {
           <h1>New Draft</h1>
           <input
             onChange={(e) => setTitle(e.target.value)}
+            name = "title"
             placeholder="Title"
             type="text"
             value={title}
@@ -95,6 +96,7 @@ const Draft: React.FC = () => {
           <textarea
             cols={50}
             onChange={(e) => setContent(e.target.value)}
+            name = "content"
             placeholder="Content"
             rows={8}
             value={content}

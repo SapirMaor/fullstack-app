@@ -51,24 +51,28 @@ const userSignUpForm: React.FC = () => {
               <input
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Username"
+                name = "username"
                 type="text"
                 value={username}
                 ref={usernameRef}
               />
               <input
                 onChange={(e) => setPassword(e.target.value)}
+                name = "password"
                 placeholder="Password"
                 type="text"
                 value={password}
               />              
               <input
                 onChange={(e) => setEmail(e.target.value)}
+                name = "email"
                 placeholder="Email"
                 type="text"
                 value={email}
               />
               <input
                 onChange={(e) => setName(e.target.value)}
+                name = "name"
                 placeholder="Name"
                 type="text"
                 value={name}
